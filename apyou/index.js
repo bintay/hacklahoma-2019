@@ -49,7 +49,6 @@ app.post('/sms', (req, res) => {
       request.get('https://aws.random.cat/meow', function (err, data, body) {
          if (err) console.log(err);
          message.media(JSON.parse(data.body).file);
-         console.log(JSON.parse(data.body).file);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
@@ -65,11 +64,9 @@ app.post('/sms', (req, res) => {
          }
       }
       city = city.trim().replace(/[^A-Za-z ]/g, '');
-      console.log(city);
       request.get('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&APPID=7e51a05cec93ac75b075312cdbc06167', function (err, data, body) {
          if (err) console.log(err);
          let weather = JSON.parse(data.body);
-         console.log(weather);
          message.body(`${weather.name} is experiencing ${weather.weather[0].description} with a temperature of ${Math.floor((1.8 * (weather.main.temp - 273.15) + 32) * 10) / 10}°F. Wind speed is ${weather.wind.speed} m/s.`);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
@@ -80,7 +77,6 @@ app.post('/sms', (req, res) => {
          exit(${req.body.Body.substring(10)})
       }`);
       script.on('exit', function (err, output) {
-         console.log(err, output);
          if (err) {
             message.body(err);
             res.writeHead(200, {'Content-Type': 'text/xml'});
@@ -94,7 +90,6 @@ app.post('/sms', (req, res) => {
       script.run();
    } else if ((words.indexOf('word') >= 0 || words.indexOf('words')) && words.indexOf('random') >= 0) {
       request.get('http://api.wordnik.com/v4/words.json/randomWord?api_key=23e82ba611d150c37814f63a4380d19cd44937d7b9ad3e439', function (err, data, body) {
-         console.log(data);
          message.body(`${JSON.parse(data.body).word} is a pretty random word.`);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
@@ -105,6 +100,16 @@ app.post('/sms', (req, res) => {
       request.get(`http://api.wordnik.com/v4/word.json/${words[index]}/definitions?limit=1&includeRelated=false&sourceDictionaries=all&useCanonical=true&includeTags=false&api_key=23e82ba611d150c37814f63a4380d19cd44937d7b9ad3e439`, function (err, data, body) {
          data = JSON.parse(data.body)
          message.body(`${words[index]} (${data[0].partOfSpeech}) - ${data[0].text}\n\n${data[0].attributionText}`);
+         res.writeHead(200, {'Content-Type': 'text/xml'});
+         res.end(message.toString());
+      });
+   } else if (words.indexOf('number')) {
+      let num = 0;
+      for (let i = 0; i < words.length; ++i) {
+         if (!isNaN(parseInt(words[i]))) num = parseInt(words[i]);
+      }
+      request.get(`http://numbersapi.com/${num}/`, function (err, data, body) {
+         message.body(body);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
