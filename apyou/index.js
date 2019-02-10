@@ -49,6 +49,7 @@ app.post('/sms', (req, res) => {
       request.get('https://aws.random.cat/meow', function (err, data, body) {
          if (err) console.log(err);
          message.media(JSON.parse(data.body).file);
+         console.log(file);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
