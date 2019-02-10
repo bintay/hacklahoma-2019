@@ -49,6 +49,7 @@ table {
 
 /*
    Start my code
+   #54494b
 */
 
 @import url('https://fonts.googleapis.com/css?family=Libre+Baskerville');
@@ -75,7 +76,7 @@ p {
 }
 
 header {
-   height: 100vh;
+   min-height: 100vh;
    background: #91c7b1;
 }
 
