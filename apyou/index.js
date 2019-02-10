@@ -103,13 +103,19 @@ app.post('/sms', (req, res) => {
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
-   } else if (words.indexOf('number')) {
+   } else if (words.indexOf('number') >= 0) {
       let num = 0;
       for (let i = 0; i < words.length; ++i) {
          if (!isNaN(parseInt(words[i]))) num = parseInt(words[i]);
       }
       request.get(`http://numbersapi.com/${num}/`, function (err, data, body) {
          message.body(body);
+         res.writeHead(200, {'Content-Type': 'text/xml'});
+         res.end(message.toString());
+      });
+   } else if (words.indexOf('yodify') == 0) {
+      request.get(`https://api.funtranslations.com/translate/yoda.json?text=${text.substring(6)}`, function  (err, data, body) {
+         message.body(body.translated);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
