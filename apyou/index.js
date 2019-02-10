@@ -115,7 +115,7 @@ app.post('/sms', (req, res) => {
       });
    } else if (words.indexOf('yodify') == 0) {
       request.get(`https://api.funtranslations.com/translate/yoda.json?text=${text.substring(6)}`, function  (err, data, body) {
-         message.body(body.translated);
+         message.body(body.contents.translated);
          res.writeHead(200, {'Content-Type': 'text/xml'});
          res.end(message.toString());
       });
